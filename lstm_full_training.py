@@ -62,6 +62,7 @@ class ImprovedLSTMModel(nn.Module):
         self.output = nn.Linear(128, 2)
         
         self.relu = nn.ReLU()
+        self.sigmoid = nn.Sigmoid()
     
     def forward(self, x):
         """
@@ -109,7 +110,7 @@ class ImprovedLSTMModel(nn.Module):
         x = self.dropout3(x)
         
         x = self.output(x)  # (batch, 2)
-        
+        x = self.sigmoid(x)
         return x
 
 
@@ -504,10 +505,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/processed')
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--epochs', type=int, default=200)
-    parser.add_argument('--hidden_size', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=3)
-    parser.add_argument('--dropout', type=float, default=0.4)
+    parser.add_argument('--epochs', type=int, default=40)
+    parser.add_argument('--hidden_size', type=int, default=128)
+    parser.add_argument('--num_layers', type=int, default=2)
+    parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument('--lr', type=float, default=1e-3)
     
     args = parser.parse_args()

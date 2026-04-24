@@ -20,13 +20,13 @@ from baseline_models import MelSpectrogramDataset
 
 def grid_search_lstm(
     data_dir='data/processed',
-    hidden_sizes=[128, 256, 512],
-    num_layers=[2, 3],
-    dropouts=[0.2, 0.4, 0.5],
-    learning_rates=[5e-4, 1e-3, 5e-3],
-    batch_sizes=[16, 32],
-    epochs=100,
-    early_stopping_patience=15,
+    hidden_sizes=[128, 256],
+    num_layers=[2],
+    dropouts=[0.3, 0.5],
+    learning_rates=[5e-4, 1e-3],
+    batch_sizes=[32],
+    epochs=40,
+    early_stopping_patience=5,
     results_file='hyperparameter_search_results.csv'
 ):
     """
@@ -159,6 +159,9 @@ def grid_search_lstm(
             
             elapsed = (datetime.now() - start_time).total_seconds() / 60
             
+            # Checkpoint path (trainer saves best model there)
+            checkpoint_path = os.path.join('checkpoints', f'{experiment_name}_best.pth')
+
             # Save result
             result = {
                 'hidden_size': hidden_size,
@@ -175,7 +178,7 @@ def grid_search_lstm(
                 'test_corr_val': test_metrics['valence_corr'],
                 'test_corr_arou': test_metrics['arousal_corr'],
                 'training_time_min': elapsed,
-                'checkpoint': f'checkpoints/{experiment_name}_best.pth'
+                'checkpoint': checkpoint_path
             }
             
             results.append(result)
@@ -212,7 +215,7 @@ def grid_search_lstm(
                     'test_corr_val': f"{test_metrics['valence_corr']:.4f}",
                     'test_corr_arou': f"{test_metrics['arousal_corr']:.4f}",
                     'training_time_min': f"{elapsed:.1f}",
-                    'checkpoint': experiment_name
+                    'checkpoint': checkpoint_path
                 }
                 writer.writerow(row)
         
@@ -259,13 +262,13 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hidden_sizes', type=int, nargs='+', default=[128, 256, 512])
-    parser.add_argument('--num_layers', type=int, nargs='+', default=[2, 3])
-    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.2, 0.4, 0.5])
-    parser.add_argument('--lrs', type=float, nargs='+', default=[5e-4, 1e-3, 5e-3])
-    parser.add_argument('--batch_sizes', type=int, nargs='+', default=[16, 32])
-    parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--patience', type=int, default=15)
+    parser.add_argument('--hidden_sizes', type=int, nargs='+', default=[128])
+    parser.add_argument('--num_layers', type=int, nargs='+', default=[2])
+    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.5])
+    parser.add_argument('--lrs', type=float, nargs='+', default=[1e-3])
+    parser.add_argument('--batch_sizes', type=int, nargs='+', default=[32])
+    parser.add_argument('--epochs', type=int, default=40)
+    parser.add_argument('--patience', type=int, default=5)
     
     args = parser.parse_args()
     

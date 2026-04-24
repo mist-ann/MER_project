@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-04-23 03:14:47.854782",
+  "total_time_min": 491.04399148333334,
+  "experiments": {
+    "Advanced Random Forest + Gradient Boosting": {
+      "status": "failed",
+      "time_min": 490.88021229902904
+    },
+    "LSTM Full Training (improved architecture)": {
+      "status": "failed",
+      "time_min": 0.08581802447636923
+    },
+    "Hyperparameter Tuning (Grid Search)": {
+      "status": "failed",
+      "time_min": 0.07794784704844157
+    }
+  }
+}
