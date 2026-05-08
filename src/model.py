@@ -88,11 +88,6 @@ class MER_CNN_VGG_Style(MER_CNN_Model):
             optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss="mean_squared_error",
             metrics=["mae"],
-            callbacks=[
-                EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True),
-                ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, min_lr=1e-6),
-                ModelCheckpoint("best_model_vgg.h5", save_best_only=True),
-            ],
         )
 
 
@@ -127,11 +122,6 @@ class MER_CRNN(MER_CNN_Model):
             optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss="mean_squared_error",
             metrics=["mae"],
-            callbacks=[
-                EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True),
-                ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, min_lr=1e-6),
-                ModelCheckpoint("best_model_crnn.h5", save_best_only=True),
-            ],
         )
 
 
@@ -157,9 +147,4 @@ class MER_CNN_MobileNet(MER_CNN_Model):
             optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss="mean_squared_error",
             metrics=["mae"],
-            callbacks=[
-                EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True),
-                ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, min_lr=1e-6),
-                ModelCheckpoint("best_model_mobilenet.h5", save_best_only=True),
-            ],
         )
