@@ -13,6 +13,7 @@ from tensorflow.keras.layers import (
     GRU,
     Bidirectional,
     Concatenate,
+    Normalization,
 )
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.applications import MobileNetV2
@@ -40,6 +41,7 @@ class MER_CNN_Simple(MER_CNN_Model):
         self._model = Sequential(
             [
                 Input(shape=(128, None, 1)),
+                Normalization(),
                 Conv2D(32, (3, 3), activation="relu", padding="same"),
                 BatchNormalization(),
                 MaxPooling2D((2, 2)),
@@ -70,7 +72,9 @@ class MER_CNN_VGG_Style(MER_CNN_Model):
     def __init__(self, input_shape=(128, 128, 1)):
         inputs = Input(shape=input_shape)
 
-        x = Conv2D(32, (3, 3), activation="relu", padding="same")(inputs)
+        x = Normalization()(inputs)
+
+        x = Conv2D(32, (3, 3), activation="relu", padding="same")(x)
         x = BatchNormalization()(x)
         x = MaxPooling2D((2, 2))(x)
 
@@ -105,8 +109,10 @@ class MER_CRNN(MER_CNN_Model):
     def __init__(self, input_shape=(128, 128, 1)):
         inputs = Input(shape=input_shape)
 
+        x = Normalization()(inputs)
+
         # Feature extraction with CNN
-        x = Conv2D(64, (3, 3), activation="relu", padding="same")(inputs)
+        x = Conv2D(64, (3, 3), activation="relu", padding="same")(x)
         x = MaxPooling2D((2, 2))(x)
         x = Conv2D(128, (3, 3), activation="relu", padding="same")(x)
         x = MaxPooling2D((2, 4))(x)
@@ -142,7 +148,9 @@ class MER_CNN_MobileNet(MER_CNN_Model):
     def __init__(self, input_shape=(128, 128, 1)):
         inputs = Input(shape=input_shape)
 
-        x_3channel = Concatenate(axis=-1)([inputs, inputs, inputs])  # Convert to 3 channels
+        x = Normalization()(inputs)
+
+        x_3channel = Concatenate(axis=-1)([x, x, x])  # Convert to 3 channels
         base_model = MobileNetV2(weights="imagenet", include_top=False, input_shape=(128, 128, 3))
         base_model.trainable = False  # Freeze the base model
 
