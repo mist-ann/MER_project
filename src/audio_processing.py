@@ -6,8 +6,8 @@ import os
 from tensorflow.keras.utils import Sequence
 
 
-def audio_to_mel_spectrogram(audio_path, n_mels=128, hop_length=512):
-    y, sr = librosa.load(audio_path, duration=45)
+def audio_to_mel_spectrogram(audio_path, n_mels=128, hop_length=512, sr=22050):
+    y, sr = librosa.load(audio_path, duration=45, sr=sr)
     # Compute the Mel spectrogram
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=n_mels, hop_length=hop_length)
     # Convert to decibel scale
@@ -15,12 +15,12 @@ def audio_to_mel_spectrogram(audio_path, n_mels=128, hop_length=512):
     return S_dB
 
 
-def preprocess_deam(audio_dir, save_dir):
+def preprocess_deam(audio_dir, save_dir, n_mels=128, hop_length=512, sr=22050):
     os.makedirs(save_dir, exist_ok=True)
     for filename in os.listdir(audio_dir):
         if filename.endswith(".mp3"):
             audio_path = os.path.join(audio_dir, filename)
-            mel_spectrogram = audio_to_mel_spectrogram(audio_path)
+            mel_spectrogram = audio_to_mel_spectrogram(audio_path, n_mels=n_mels, hop_length=hop_length, sr=sr)
             save_path = os.path.join(save_dir, os.path.splitext(filename)[0] + ".npy")
             np.save(save_path, mel_spectrogram)
 
@@ -104,7 +104,6 @@ class DEAMSegmentGenerator(Sequence):
         self.sr = sr
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.on_epoch_end()
 
         self.samples = []
         span_seconds = 3.0
@@ -127,8 +126,7 @@ class DEAMSegmentGenerator(Sequence):
                 for start in range(start_min, spec_shape - segment_width, self.hop_size_frames):
                     self.samples.append((song_id, start))
 
-        if self.shuffle:
-            np.random.shuffle(self.samples)
+        self.on_epoch_end()
 
     def __len__(self):
         return int(np.floor(len(self.samples) / self.batch_size))
@@ -155,13 +153,13 @@ class DEAMSegmentGenerator(Sequence):
             time_ms = int((start * self.hop_size / self.sr) * 1000)
 
             # Szukamy najbliższego klucza
-            available_times = list(self.dynamic_labels[song_id].keys())
+            available_times = list(self.labels[song_id].keys())
             closest_time = min(available_times, key=lambda x: abs(x - time_ms))
 
             X.append(segment)
-            y.append(self.dynamic_labels[song_id][closest_time])
+            y.append(self.labels[song_id][closest_time])
 
-        X = np.array(X)[..., np.newaxis]  # Add channel dimension
+        X = np.array(X)[..., np.newaxis]  # Add channel dimension (Batch, Height, Width, 1)
         y = np.array(y)
         return X, y
 
@@ -171,9 +169,13 @@ class DEAMSegmentGenerator(Sequence):
 
 
 class DEAMGenerator(Sequence):
-    def __init__(self, song_ids, labels, data_dir, batch_size=32, shuffle=True):
+    def __init__(
+        self, song_ids, labels_dict, data_dir, segment_width=128, hop_size=64, sr=22050, batch_size=32, shuffle=True
+    ):
         self.song_ids = song_ids
-        self.labels = labels
+        self.labels = labels_dict
+        self.segment_width = segment_width
+        self.hop_size = hop_size
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.shuffle = shuffle

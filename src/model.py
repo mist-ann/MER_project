@@ -20,13 +20,9 @@ from tensorflow.keras.applications import MobileNetV2
 
 
 class MER_CNN_Model:
-    def fit(self, X_train, y_train, X_val, y_val, epochs=50, batch_size=32):
+    def fit(self, train_generator, validation_generator, epochs=50, callbacks=None):
         return self._model.fit(
-            X_train,
-            y_train,
-            validation_data=(X_val, y_val),
-            epochs=epochs,
-            batch_size=batch_size,
+            train_generator, validation_data=validation_generator, epochs=epochs, callbacks=callbacks
         )
 
     def predict(self, X):
@@ -40,7 +36,7 @@ class MER_CNN_Simple(MER_CNN_Model):
     def __init__(self):
         self._model = Sequential(
             [
-                Input(shape=(128, None, 1)),
+                Input(shape=(128, 128, 1)),
                 Normalization(),
                 Conv2D(32, (3, 3), activation="relu", padding="same"),
                 BatchNormalization(),
@@ -60,11 +56,6 @@ class MER_CNN_Simple(MER_CNN_Model):
             optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss="mean_squared_error",
             metrics=["mae"],
-            callbacks=[
-                EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True),
-                ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, min_lr=1e-6),
-                ModelCheckpoint("best_model.h5", save_best_only=True),
-            ],
         )
 
 
