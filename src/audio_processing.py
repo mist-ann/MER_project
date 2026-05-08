@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 import librosa
 import numpy as np
@@ -71,6 +72,102 @@ def load_valence_arousal(dir_path, span=0.5):
     data = pd.merge(df1, df2, on=["song_id"])
 
     return data
+
+
+def get_song_ids_and_labels(labels_df):
+    dynamic_labels = {}
+
+    for _, row in labels_df.iterrows():
+        song_id = str(int(row["song_id"]))
+        dynamic_labels[song_id] = {}
+        for col in labels_df.columns:
+            if "arousal" in col:
+                time_ms = int(re.search(r"\d+", col).group())
+                value_arousal = row[col]
+
+                col_valence = col.replace("arousal", "valence")
+                value_valence = row[col_valence]
+
+                dynamic_labels[song_id][time_ms] = (value_valence, value_arousal)
+    return dynamic_labels
+
+
+class DEAMSegmentGenerator(Sequence):
+    def __init__(
+        self, song_ids, labels_dict, data_dir, segment_width=128, hop_size=64, sr=22050, batch_size=32, shuffle=True
+    ):
+        self.song_ids = song_ids
+        self.labels = labels_dict
+        self.data_dir = data_dir
+        self.segment_width = segment_width
+        self.hop_size = hop_size
+        self.sr = sr
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.on_epoch_end()
+
+        self.samples = []
+        span_seconds = 3.0
+        self.hop_size_frames = int((span_seconds * self.sr) / self.hop_size)
+
+        # Tworzymy listę wszystkich możliwych okien ze wszystkich utworów
+        for song_id in labels_dict.keys():
+            file_path = os.path.join(self.data_dir, f"{song_id}.npy")
+            if os.path.exists(file_path):
+                # spec = np.load(file_path, mmap_mode="r")  # mmap_mode nie ładuje całego pliku do RAM
+                # total_frames = spec.shape[1]
+
+                # # Obliczamy punkty startowe dla okien
+                # for start in range(0, total_frames - segment_width, hop_size):
+                #     self.samples.append((song_id, start))
+                # Zaczynamy od 15s (DEAM), idziemy skokiem równym spanowi
+                start_min = int((15000 / 1000) * self.sr / self.hop_size)
+                # Używamy mmap_mode, żeby tylko sprawdzić rozmiar pliku
+                spec_shape = np.load(file_path, mmap_mode="r").shape[1]
+                for start in range(start_min, spec_shape - segment_width, self.hop_size_frames):
+                    self.samples.append((song_id, start))
+
+        if self.shuffle:
+            np.random.shuffle(self.samples)
+
+    def __len__(self):
+        return int(np.floor(len(self.samples) / self.batch_size))
+
+    def __getitem__(self, index):
+        batch_samples = self.samples[index * self.batch_size : (index + 1) * self.batch_size]
+
+        X = []
+        y = []
+
+        for song_id, start in batch_samples:
+            mel_spectrogram = np.load(os.path.join(self.data_dir, f"{song_id}.npy"), mmap_mode="r")
+            segment = mel_spectrogram[:, start : start + self.segment_width]
+
+            # # normalizacja
+            # segment = (segment - np.mean(segment)) / (np.std(segment) + 1e-6)
+
+            # # mel_spectrogram = # przycinanie lub padding do stałego rozmiaru (np. 128x128)
+
+            # X.append(segment)
+            # y.append(self.labels.loc[song_id])
+
+            # Obliczamy czas startu w ms, aby dopasować do słownika
+            time_ms = int((start * self.hop_size / self.sr) * 1000)
+
+            # Szukamy najbliższego klucza
+            available_times = list(self.dynamic_labels[song_id].keys())
+            closest_time = min(available_times, key=lambda x: abs(x - time_ms))
+
+            X.append(segment)
+            y.append(self.dynamic_labels[song_id][closest_time])
+
+        X = np.array(X)[..., np.newaxis]  # Add channel dimension
+        y = np.array(y)
+        return X, y
+
+    def on_epoch_end(self):
+        if self.shuffle:
+            np.random.shuffle(self.samples)
 
 
 class DEAMGenerator(Sequence):
