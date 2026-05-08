@@ -1,7 +1,3 @@
-"""
-Hyperparameter Tuning - Grid Search
-Automatycznie testuje różne kombinacje i zapisuje najlepsze modele
-"""
 
 import os
 import json
@@ -13,20 +9,20 @@ from itertools import product
 from datetime import datetime
 import csv
 
-# Import z poprzedniego skryptu
-from lstm_full_training import ImprovedLSTMModel, LSTMTrainer
+from lstm_v2 import Trainer as LSTMTrainer
+from lstm_v2 import LSTMFixed as ImprovedLSTMModel 
 from baseline_models import MelSpectrogramDataset
 
 
 def grid_search_lstm(
     data_dir='data/processed',
-    hidden_sizes=[128, 256],
+    hidden_sizes=[128],
     num_layers=[2],
-    dropouts=[0.3, 0.5],
-    learning_rates=[5e-4, 1e-3],
+    dropouts=[0.3],
+    learning_rates=[5e-4],
     batch_sizes=[32],
     epochs=40,
-    early_stopping_patience=5,
+    patience=5,
     results_file='hyperparameter_search_results.csv'
 ):
     """
@@ -44,12 +40,12 @@ def grid_search_lstm(
     
     # Load data (raz)
     print("Loading datasets...")
-    train_data = np.load(f'{data_dir}/train_dataset.npz')
-    with open(f'{data_dir}/train_mel_specs.pkl', 'rb') as f:
+    train_data = np.load(f'sp2/{data_dir}/train_dataset_v0.npz')
+    with open(f'sp2/{data_dir}/train_mel_specs_v0.pkl', 'rb') as f:
         train_mel_specs = pickle.load(f)
     
-    test_data = np.load(f'{data_dir}/test_dataset.npz')
-    with open(f'{data_dir}/test_mel_specs.pkl', 'rb') as f:
+    test_data = np.load(f'sp2/{data_dir}/test_dataset_v0.npz')
+    with open(f'sp2/{data_dir}/test_mel_specs_v0.pkl', 'rb') as f:
         test_mel_specs = pickle.load(f)
     
     print(f"✓ Train: {len(train_mel_specs)} samples")
@@ -139,23 +135,30 @@ def grid_search_lstm(
             checkpoint_dir='checkpoints',
             experiment_name=experiment_name
         )
+        trainer.run_config = {
+            'hidden_size': hidden_size,
+            'num_layers': num_layers_val,
+            'dropout': dropout,
+            'lr': lr,
+            'batch_size': batch_size,
+        }
         
         try:
             history = trainer.fit(
                 train_loader,
                 val_loader,
                 epochs=epochs,
-                early_stopping_patience=early_stopping_patience
+                patience=patience
             )
             
             # Best epoch
-            best_epoch = np.argmin(history['val_loss'])
-            best_val_loss_combo = history['val_loss'][best_epoch]
-            best_val_mae_val = history['val_mae_val'][best_epoch]
-            best_val_mae_arou = history['val_mae_arou'][best_epoch]
+            best_epoch = int(np.argmin(history['val_loss']))
+            best_val_loss_combo = float(history['val_loss'][best_epoch])
+            best_val_mae_val = float(history['val_mae_val'][best_epoch])
+            best_val_mae_arou = float(history['val_mae_aro'][best_epoch])
             
             # Test evaluation
-            test_metrics, _, _ = trainer.evaluate_test(test_loader)
+            test_metrics, _, _ = trainer.evaluate(test_loader)
             
             elapsed = (datetime.now() - start_time).total_seconds() / 60
             
@@ -164,20 +167,20 @@ def grid_search_lstm(
 
             # Save result
             result = {
-                'hidden_size': hidden_size,
-                'num_layers': num_layers_val,
-                'dropout': dropout,
-                'lr': lr,
-                'batch_size': batch_size,
+                'hidden_size': int(hidden_size),
+                'num_layers': int(num_layers_val),
+                'dropout': float(dropout),
+                'lr': float(lr),
+                'batch_size': int(batch_size),
                 'best_epoch': best_epoch,
                 'val_loss': best_val_loss_combo,
                 'val_mae_val': best_val_mae_val,
                 'val_mae_arou': best_val_mae_arou,
-                'test_mae_val': test_metrics['valence_mae'],
-                'test_mae_arou': test_metrics['arousal_mae'],
-                'test_corr_val': test_metrics['valence_corr'],
-                'test_corr_arou': test_metrics['arousal_corr'],
-                'training_time_min': elapsed,
+                'test_mae_val': float(test_metrics['valence_mae']),
+                'test_mae_arou': float(test_metrics['arousal_mae']),
+                'test_corr_val': float(test_metrics['valence_corr']),
+                'test_corr_arou': float(test_metrics['arousal_corr']),
+                'training_time_min': float(elapsed),
                 'checkpoint': checkpoint_path
             }
             
@@ -263,9 +266,9 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_sizes', type=int, nargs='+', default=[128])
-    parser.add_argument('--num_layers', type=int, nargs='+', default=[2])
-    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.5])
-    parser.add_argument('--lrs', type=float, nargs='+', default=[1e-3])
+    parser.add_argument('--num_layers', type=int, nargs='+', default=[3])
+    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.3, 0.5])
+    parser.add_argument('--lrs', type=float, nargs='+', default=[5e-4, 1e-3])
     parser.add_argument('--batch_sizes', type=int, nargs='+', default=[32])
     parser.add_argument('--epochs', type=int, default=40)
     parser.add_argument('--patience', type=int, default=5)
@@ -279,5 +282,5 @@ if __name__ == "__main__":
         learning_rates=args.lrs,
         batch_sizes=args.batch_sizes,
         epochs=args.epochs,
-        early_stopping_patience=args.patience
+        patience=args.patience
     )
