@@ -110,7 +110,7 @@ class DEAMSegmentGenerator(Sequence):
         self.hop_size_frames = int((span_seconds * self.sr) / self.hop_size)
 
         # Tworzymy listę wszystkich możliwych okien ze wszystkich utworów
-        for song_id in labels_dict.keys():
+        for song_id in self.song_ids:
             file_path = os.path.join(self.data_dir, f"{song_id}.npy")
             if os.path.exists(file_path):
                 # spec = np.load(file_path, mmap_mode="r")  # mmap_mode nie ładuje całego pliku do RAM
