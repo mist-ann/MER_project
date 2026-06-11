@@ -1,0 +1,31 @@
+{
+  "architecture": "attention_cnn",
+  "window_seconds": 1.0,
+  "model_name": "attention_cnn_1s",
+  "model_params": 529382,
+  "segment_width": 43,
+  "input_shape": [
+    128,
+    43,
+    1
+  ],
+  "train_songs": 1046,
+  "val_songs": 349,
+  "test_songs": 349,
+  "train_segments": 31377,
+  "val_segments": 10470,
+  "test_segments": 10469,
+  "normalize_segments": true,
+  "run_suffix": "",
+  "learning_rate": 0.001,
+  "mae_valence": 0.15524634795421596,
+  "mae_arousal": 0.16147984642511856,
+  "mae_mean": 0.15836309718966726,
+  "rmse_valence": 0.19336779702884418,
+  "rmse_arousal": 0.20089740183897564,
+  "rmse_mean": 0.19713259943390993,
+  "r2_valence": 0.3009011991580859,
+  "r2_arousal": 0.5069171356808178,
+  "r2_mean": 0.4039091674194518,
+  "emotion_accuracy": 0.5524882987868946
+}

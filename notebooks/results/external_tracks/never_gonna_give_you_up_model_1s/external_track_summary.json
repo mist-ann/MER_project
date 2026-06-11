@@ -1,0 +1,31 @@
+{
+  "track_title": "Never Gonna Give You Up",
+  "artist": "Rick Astley",
+  "audio_path": "never-gonna-give-you-up.mp3",
+  "model_path": "E:\\studio projektowe 2\\new\\MER_project-conv\\notebooks\\models\\model_1s\\best_model.keras",
+  "sr": 22050,
+  "n_mels": 128,
+  "hop_length": 512,
+  "window_seconds": 1.0,
+  "step_seconds": 1.0,
+  "segment_width_frames": 43,
+  "hop_frames": 43,
+  "duration_seconds": 210.35002267573697,
+  "segment_count": 211,
+  "normalize_segments": false,
+  "mean_pred_valence_deam_scale": 0.3273807466030121,
+  "mean_pred_arousal_deam_scale": 0.46525388956069946,
+  "mean_pred_valence_0_1_scale": 0.6636903882026672,
+  "mean_pred_arousal_0_1_scale": 0.7326269745826721,
+  "mean_pred_emotion": "HAPPY",
+  "target_spotify_valence": 0.91,
+  "target_spotify_arousal": 0.94,
+  "abs_error_valence_0_1_scale": 0.2463096117973328,
+  "abs_error_arousal_0_1_scale": 0.20737302541732783,
+  "mean_abs_error_0_1_scale": 0.2268413186073303,
+  "emotion_distribution": {
+    "HAPPY": 208,
+    "NEUTRAL": 3
+  },
+  "scale_note": "Model predicts DEAM-style values on roughly [-1, 1]. Spotify comparison uses (x + 1) / 2."
+}

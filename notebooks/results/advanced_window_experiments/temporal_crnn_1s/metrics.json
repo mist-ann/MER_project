@@ -1,0 +1,30 @@
+{
+  "architecture": "temporal_crnn",
+  "window_seconds": 1.0,
+  "model_name": "temporal_crnn_1s",
+  "model_params": 1011750,
+  "segment_width": 43,
+  "input_shape": [
+    128,
+    43,
+    1
+  ],
+  "train_songs": 1046,
+  "val_songs": 349,
+  "test_songs": 349,
+  "train_segments": 31377,
+  "val_segments": 10470,
+  "test_segments": 10469,
+  "normalize_segments": true,
+  "learning_rate": 0.001,
+  "mae_valence": 0.14842297136136154,
+  "mae_arousal": 0.16425804895001786,
+  "mae_mean": 0.1563405101556897,
+  "rmse_valence": 0.18658033140810062,
+  "rmse_arousal": 0.20640848806799106,
+  "rmse_mean": 0.19649440973804583,
+  "r2_valence": 0.34911842398254245,
+  "r2_arousal": 0.4794932388518123,
+  "r2_mean": 0.41430583141717736,
+  "emotion_accuracy": 0.5543987009265451
+}

@@ -1,0 +1,26 @@
+{
+  "window_seconds": 1.0,
+  "model_name": "model_1s",
+  "segment_width": 43,
+  "input_shape": [
+    128,
+    43,
+    1
+  ],
+  "train_songs": 1046,
+  "val_songs": 349,
+  "test_songs": 349,
+  "train_segments": 31377,
+  "val_segments": 10470,
+  "test_segments": 10469,
+  "mae_valence": 0.14303418723611816,
+  "mae_arousal": 0.1497121470379347,
+  "mae_mean": 0.14637316713702642,
+  "rmse_valence": 0.18245371934307944,
+  "rmse_arousal": 0.19286494120643072,
+  "rmse_mean": 0.18765933027475507,
+  "r2_valence": 0.37759123477376033,
+  "r2_arousal": 0.5455586427528811,
+  "r2_mean": 0.46157493876332073,
+  "emotion_accuracy": 0.6153405291813927
+}
