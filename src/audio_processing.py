@@ -6,6 +6,18 @@ import os
 from tensorflow.keras.utils import Sequence
 
 
+def _extract_time_ms(column_name):
+    match = re.search(r"sample_(\d+)ms", column_name)
+    if match:
+        return int(match.group(1))
+
+    match = re.search(r"\d+", column_name)
+    if match:
+        return int(match.group())
+
+    return None
+
+
 def audio_to_mel_spectrogram(audio_path, n_mels=128, hop_length=512, sr=22050):
     y, sr = librosa.load(audio_path, duration=45, sr=sr)
     # Compute the Mel spectrogram
@@ -41,15 +53,23 @@ def load_mean_valence_arousal(dir_path):
 
 def reduce_time_columns(df, num_cols=5, suffix=""):
     id_col = df[["song_id"]].reset_index(drop=True)
-    time_cols = df.drop(columns=["song_id"])
+    time_cols = sorted(
+        [col for col in df.columns if col != "song_id"],
+        key=lambda col: _extract_time_ms(col) if _extract_time_ms(col) is not None else -1,
+    )
     grouped = []
-    cols = time_cols.columns.tolist()
 
-    for i in range(0, len(cols), num_cols):
-        group = time_cols[cols[i : (i + num_cols)]]
+    for i in range(0, len(time_cols), num_cols):
+        group_cols = time_cols[i : (i + num_cols)]
+        if len(group_cols) < num_cols:
+            break
+
+        group = df[group_cols]
         group_mean = group.mean(axis=1)
-        # group_mean = time_cols[group].mean(axis=1)
-        group_name = f"{cols[i]}_{suffix}"
+        time_ms = _extract_time_ms(group_cols[0])
+        group_name = f"sample_{time_ms}ms"
+        if suffix:
+            group_name = f"{group_name}_{suffix}"
         grouped.append(group_mean.rename(group_name))
 
     result = pd.concat([id_col, pd.concat(grouped, axis=1)], axis=1)
@@ -57,19 +77,36 @@ def reduce_time_columns(df, num_cols=5, suffix=""):
 
 
 def load_valence_arousal(dir_path, span=0.5):
+    if span < 0.5:
+        raise ValueError("span must be at least 0.5 seconds for DEAM dynamic annotations.")
+
     file_path = os.path.join(
         dir_path, "DEAM/annotations/annotations averaged per song/dynamic (per second annotations)/"
     )
-    df1 = pd.read_csv(os.path.join(file_path, "arousal.csv"))
-    df2 = pd.read_csv(os.path.join(file_path, "valence.csv"))
-    df1.columns = df1.columns.str.strip()
-    df2.columns = df2.columns.str.strip()
+    arousal_df = pd.read_csv(os.path.join(file_path, "arousal.csv"))
+    valence_df = pd.read_csv(os.path.join(file_path, "valence.csv"))
+    arousal_df.columns = arousal_df.columns.str.strip()
+    valence_df.columns = valence_df.columns.str.strip()
 
-    if span > 0.5:
-        df1 = reduce_time_columns(df1, num_cols=int(span * 2), suffix="arousal")
-        df2 = reduce_time_columns(df2, num_cols=int(span * 2), suffix="valence")
+    arousal_time_cols = [col for col in arousal_df.columns if col != "song_id"]
+    valence_time_cols = [col for col in valence_df.columns if col != "song_id"]
+    common_time_cols = sorted(
+        set(arousal_time_cols).intersection(valence_time_cols),
+        key=lambda col: _extract_time_ms(col) if _extract_time_ms(col) is not None else -1,
+    )
 
-    data = pd.merge(df1, df2, on=["song_id"])
+    arousal_df = arousal_df[["song_id"] + common_time_cols]
+    valence_df = valence_df[["song_id"] + common_time_cols]
+
+    base_step_seconds = 0.5
+    num_cols = int(round(span / base_step_seconds))
+    if not np.isclose(num_cols * base_step_seconds, span):
+        raise ValueError("span must be a multiple of 0.5 seconds.")
+
+    arousal_df = reduce_time_columns(arousal_df, num_cols=num_cols, suffix="arousal")
+    valence_df = reduce_time_columns(valence_df, num_cols=num_cols, suffix="valence")
+
+    data = pd.merge(arousal_df, valence_df, on=["song_id"])
 
     return data
 
@@ -80,23 +117,41 @@ def get_song_ids_and_labels(labels_df):
     for _, row in labels_df.iterrows():
         song_id = str(int(row["song_id"]))
         dynamic_labels[song_id] = {}
-        for col in labels_df.columns:
-            if "arousal" in col:
-                time_ms = int(re.search(r"\d+", col).group())
-                value_arousal = row[col]
+        arousal_cols = sorted(
+            [col for col in labels_df.columns if col.endswith("_arousal")],
+            key=lambda col: _extract_time_ms(col) if _extract_time_ms(col) is not None else -1,
+        )
+        for col in arousal_cols:
+            time_ms = _extract_time_ms(col)
+            col_valence = col.replace("_arousal", "_valence")
+            if time_ms is None or col_valence not in labels_df.columns:
+                continue
 
-                col_valence = col.replace("arousal", "valence")
-                value_valence = row[col_valence]
+            value_arousal = row[col]
+            value_valence = row[col_valence]
+            if pd.isna(value_arousal) or pd.isna(value_valence):
+                continue
 
-                dynamic_labels[song_id][time_ms] = (value_valence, value_arousal)
+            dynamic_labels[song_id][time_ms] = (value_valence, value_arousal)
     return dynamic_labels
 
 
 class DEAMSegmentGenerator(Sequence):
     def __init__(
-        self, song_ids, labels_dict, data_dir, segment_width=128, hop_size=64, sr=22050, batch_size=32, shuffle=True
+        self,
+        song_ids,
+        labels_dict,
+        data_dir,
+        segment_width=128,
+        hop_size=512,
+        sr=22050,
+        batch_size=32,
+        shuffle=True,
+        window_seconds=3.0,
+        label_start_ms=15000,
+        normalize_segments=False,
     ):
-        self.song_ids = song_ids
+        self.song_ids = [str(song_id) for song_id in song_ids]
         self.labels = labels_dict
         self.data_dir = data_dir
         self.segment_width = segment_width
@@ -104,13 +159,18 @@ class DEAMSegmentGenerator(Sequence):
         self.sr = sr
         self.batch_size = batch_size
         self.shuffle = shuffle
+        self.window_seconds = window_seconds
+        self.label_start_ms = label_start_ms
+        self.normalize_segments = normalize_segments
 
         self.samples = []
-        span_seconds = 3.0
-        self.hop_size_frames = int((span_seconds * self.sr) / self.hop_size)
+        self.hop_size_frames = max(1, int(round((self.window_seconds * self.sr) / self.hop_size)))
 
         # Tworzymy listę wszystkich możliwych okien ze wszystkich utworów
         for song_id in self.song_ids:
+            if song_id not in self.labels or not self.labels[song_id]:
+                continue
+
             file_path = os.path.join(self.data_dir, f"{song_id}.npy")
             if os.path.exists(file_path):
                 # spec = np.load(file_path, mmap_mode="r")  # mmap_mode nie ładuje całego pliku do RAM
@@ -120,16 +180,17 @@ class DEAMSegmentGenerator(Sequence):
                 # for start in range(0, total_frames - segment_width, hop_size):
                 #     self.samples.append((song_id, start))
                 # Zaczynamy od 15s (DEAM), idziemy skokiem równym spanowi
-                start_min = int((15000 / 1000) * self.sr / self.hop_size)
+                start_min = int(round((self.label_start_ms / 1000) * self.sr / self.hop_size))
                 # Używamy mmap_mode, żeby tylko sprawdzić rozmiar pliku
                 spec_shape = np.load(file_path, mmap_mode="r").shape[1]
-                for start in range(start_min, spec_shape - segment_width, self.hop_size_frames):
+                max_start = spec_shape - segment_width
+                for start in range(start_min, max_start + 1, self.hop_size_frames):
                     self.samples.append((song_id, start))
 
         self.on_epoch_end()
 
     def __len__(self):
-        return int(np.floor(len(self.samples) / self.batch_size))
+        return int(np.ceil(len(self.samples) / self.batch_size))
 
     def __getitem__(self, index):
         batch_samples = self.samples[index * self.batch_size : (index + 1) * self.batch_size]
@@ -139,10 +200,12 @@ class DEAMSegmentGenerator(Sequence):
 
         for song_id, start in batch_samples:
             mel_spectrogram = np.load(os.path.join(self.data_dir, f"{song_id}.npy"), mmap_mode="r")
-            segment = mel_spectrogram[:, start : start + self.segment_width]
+            segment = np.asarray(mel_spectrogram[:, start : start + self.segment_width], dtype=np.float32)
 
             # # normalizacja
             # segment = (segment - np.mean(segment)) / (np.std(segment) + 1e-6)
+            if self.normalize_segments:
+                segment = (segment - np.mean(segment)) / (np.std(segment) + 1e-6)
 
             # # mel_spectrogram = # przycinanie lub padding do stałego rozmiaru (np. 128x128)
 

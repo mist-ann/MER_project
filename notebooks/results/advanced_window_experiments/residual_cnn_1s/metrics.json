@@ -1,0 +1,30 @@
+{
+  "architecture": "residual_cnn",
+  "window_seconds": 1.0,
+  "model_name": "residual_cnn_1s",
+  "model_params": 1367430,
+  "segment_width": 43,
+  "input_shape": [
+    128,
+    43,
+    1
+  ],
+  "train_songs": 1046,
+  "val_songs": 349,
+  "test_songs": 349,
+  "train_segments": 31377,
+  "val_segments": 10470,
+  "test_segments": 10469,
+  "normalize_segments": true,
+  "learning_rate": 0.001,
+  "mae_valence": 0.14417543090236334,
+  "mae_arousal": 0.15465097131215266,
+  "mae_mean": 0.149413201107258,
+  "rmse_valence": 0.18072742413986698,
+  "rmse_arousal": 0.19581435242333517,
+  "rmse_mean": 0.18827088828160107,
+  "r2_valence": 0.38931342092123755,
+  "r2_arousal": 0.5315531626072258,
+  "r2_mean": 0.4604332917642317,
+  "emotion_accuracy": 0.6070302798739134
+}

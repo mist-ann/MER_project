@@ -1,0 +1,2 @@
+window_seconds,model_name,segment_width,input_shape,train_songs,val_songs,test_songs,train_segments,val_segments,test_segments,mae_valence,mae_arousal,mae_mean,rmse_valence,rmse_arousal,rmse_mean,r2_valence,r2_arousal,r2_mean,emotion_accuracy
+3.0,model_3s,129,"(128, 129, 1)",1046,349,349,10457,3490,3489,0.14352549640938642,0.15023337555477073,0.1468794359820786,0.1794088811409432,0.19304512141720337,0.18622700127907327,0.39706189108981305,0.5440469317518193,0.47055441142081617,0.6119231871596446

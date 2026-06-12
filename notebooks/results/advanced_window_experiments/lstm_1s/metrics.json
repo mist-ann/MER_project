@@ -1,0 +1,31 @@
+{
+  "architecture": "lstm",
+  "window_seconds": 1.0,
+  "model_name": "lstm_1s",
+  "model_params": 185285,
+  "segment_width": 43,
+  "input_shape": [
+    128,
+    43,
+    1
+  ],
+  "train_songs": 1046,
+  "val_songs": 349,
+  "test_songs": 349,
+  "train_segments": 31377,
+  "val_segments": 10470,
+  "test_segments": 10469,
+  "normalize_segments": true,
+  "run_suffix": "",
+  "learning_rate": 0.001,
+  "mae_valence": 0.15614003955416775,
+  "mae_arousal": 0.17818844260940855,
+  "mae_mean": 0.16716424108178815,
+  "rmse_valence": 0.19405150683093075,
+  "rmse_arousal": 0.21931547951104133,
+  "rmse_mean": 0.20668349317098605,
+  "r2_valence": 0.2959487124241339,
+  "r2_arousal": 0.4123620415643321,
+  "r2_mean": 0.354155376994233,
+  "emotion_accuracy": 0.556786703601108
+}
