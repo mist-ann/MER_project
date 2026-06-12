@@ -87,30 +87,43 @@ def load_mel_spectrograms(data_dir='data/processed'):
     """Load mel spectrograms from pickle files."""
     print("Loading mel spectrograms...")
     
-    with open(f'sp2/{data_dir}/train_mel_specs_v0.pkl', 'rb') as f:
+    with open(f'{data_dir}/train_mel_specs.pkl', 'rb') as f:
         train_mel_specs = pickle.load(f)
     
-    with open(f'sp2/{data_dir}/test_mel_specs_v0.pkl', 'rb') as f:
+    with open(f'{data_dir}/test_mel_specs.pkl', 'rb') as f:
         test_mel_specs = pickle.load(f)
     
     # Load arousal/valence labels
-    train_data = np.load(f'sp2/{data_dir}/train_dataset_v0.npz')
-    test_data = np.load(f'sp2/{data_dir}/test_dataset_v0.npz')
+    train_data = np.load(f'{data_dir}/train_dataset.npz')
+    test_data = np.load(f'{data_dir}/test_dataset.npz')
+
+    train_mask = np.isfinite(train_data['valence']) & np.isfinite(train_data['arousal'])
+    test_mask = np.isfinite(test_data['valence']) & np.isfinite(test_data['arousal'])
+
+    train_mel_specs = [mel_spec for mel_spec, keep in zip(train_mel_specs, train_mask) if keep]
+    test_mel_specs = [mel_spec for mel_spec, keep in zip(test_mel_specs, test_mask) if keep]
+
+    train_valence = train_data['valence'][train_mask]
+    train_arousal = train_data['arousal'][train_mask]
+    test_valence = test_data['valence'][test_mask]
+    test_arousal = test_data['arousal'][test_mask]
+
+    print(f"  Removed invalid rows: train={int((~train_mask).sum())}, test={int((~test_mask).sum())}")
     
     print(f"✓ Train: {len(train_mel_specs)} samples")
     print(f"✓ Test:  {len(test_mel_specs)} samples\n")
     
     return (
         np.array(train_mel_specs)[..., np.newaxis],  # Add channel dimension
-        train_data['valence'],
-        train_data['arousal'],
+        train_valence,
+        train_arousal,
         np.array(test_mel_specs)[..., np.newaxis],
-        test_data['valence'],
-        test_data['arousal']
+        test_valence,
+        test_arousal
     )
 
 
-def create_data_generators(X_train, y_train, X_val, y_val, batch_size=32):
+def create_data_generators(X_train, y_train_val, y_train_arousal, X_val, y_val_val, y_val_arousal, batch_size=32):
     """Create data generators for augmentation."""
     # Simple generator for training (with some augmentation)
     train_gen = ImageDataGenerator(
@@ -124,8 +137,8 @@ def create_data_generators(X_train, y_train, X_val, y_val, batch_size=32):
     val_gen = ImageDataGenerator()  # No augmentation for validation
     
     # Stack valence and arousal as multi-output
-    y_train_stacked = np.stack([y_train, y_train_arousal], axis=1)
-    y_val_stacked = np.stack([y_val, y_val_arousal], axis=1)
+    y_train_stacked = np.stack([y_train_val, y_train_arousal], axis=1)
+    y_val_stacked = np.stack([y_val_val, y_val_arousal], axis=1)
     
     train_generator = train_gen.flow(X_train, y_train_stacked, batch_size=batch_size)
     val_generator = val_gen.flow(X_val, y_val_stacked, batch_size=batch_size)
@@ -202,7 +215,7 @@ def grid_search_cnn(
     best_params = None
     
     # Create checkpoints directory
-    os.makedirs('checkpoints', exist_ok=True)
+    os.makedirs('checkpoints3', exist_ok=True)
     
     # Grid search
     for combo_idx, (dropout, lr, batch_size, filters_base) in enumerate(param_combinations):
@@ -251,7 +264,7 @@ def grid_search_cnn(
         )
         
         experiment_name = f"cnn_do{dropout:.2f}_lr{lr:.0e}_bs{batch_size}_fb{filters_base}"
-        checkpoint_path = os.path.join('checkpoints', f'{experiment_name}_best.h5')
+        checkpoint_path = os.path.join('checkpoints3', f'{experiment_name}_best.h5')
         
         # Callbacks
         callbacks = [
@@ -395,7 +408,7 @@ if __name__ == "__main__":
     parser.add_argument('--lrs', type=float, nargs='+', default=[1e-3, 5e-4])
     parser.add_argument('--batch_sizes', type=int, nargs='+', default=[32])
     parser.add_argument('--filters_bases', type=int, nargs='+', default=[32])
-    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--epochs', type=int, default=60)
     parser.add_argument('--patience', type=int, default=7)
     
     args = parser.parse_args()

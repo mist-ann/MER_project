@@ -84,32 +84,45 @@ def load_mel_spectrograms(data_dir='data/processed'):
     """Load mel spectrograms from pickle files."""
     print("Loading mel spectrograms...")
     
-    with open(f'sp2/{data_dir}/train_mel_specs_v0.pkl', 'rb') as f:
+    with open(f'sp2/{data_dir}/train_mel_specs.pkl', 'rb') as f:
         train_mel_specs = pickle.load(f)
     
-    with open(f'sp2/{data_dir}/test_mel_specs_v0.pkl', 'rb') as f:
+    with open(f'sp2/{data_dir}/test_mel_specs.pkl', 'rb') as f:
         test_mel_specs = pickle.load(f)
     
     # Load arousal/valence labels
-    train_data = np.load(f'sp2/{data_dir}/train_dataset_v0.npz')
-    test_data = np.load(f'sp2/{data_dir}/test_dataset_v0.npz')
+    train_data = np.load(f'sp2/{data_dir}/train_dataset.npz')
+    test_data = np.load(f'sp2/{data_dir}/test_dataset.npz')
+
+    train_mask = np.isfinite(train_data['valence']) & np.isfinite(train_data['arousal'])
+    test_mask = np.isfinite(test_data['valence']) & np.isfinite(test_data['arousal'])
+
+    train_mel_specs = [mel_spec for mel_spec, keep in zip(train_mel_specs, train_mask) if keep]
+    test_mel_specs = [mel_spec for mel_spec, keep in zip(test_mel_specs, test_mask) if keep]
+
+    train_valence = train_data['valence'][train_mask]
+    train_arousal = train_data['arousal'][train_mask]
+    test_valence = test_data['valence'][test_mask]
+    test_arousal = test_data['arousal'][test_mask]
+
+    print(f"  Removed invalid rows: train={int((~train_mask).sum())}, test={int((~test_mask).sum())}")
     
     print(f"✓ Train: {len(train_mel_specs)} samples")
     print(f"✓ Test:  {len(test_mel_specs)} samples\n")
     
     return (
         np.array(train_mel_specs)[..., np.newaxis],  # Add channel dimension
-        train_data['valence'],
-        train_data['arousal'],
+        train_valence,
+        train_arousal,
         np.array(test_mel_specs)[..., np.newaxis],
-        test_data['valence'],
-        test_data['arousal']
+        test_valence,
+        test_arousal
     )
 
 
 def train_cnn(
     data_dir='data/processed',
-    dropout=0.5,
+    dropout=0.3,
     learning_rate=0.001,
     batch_size=32,
     epochs=50,
@@ -155,7 +168,7 @@ def train_cnn(
     print(f"  Test:  {X_test.shape}, Labels: {y_test.shape}\n")
     
     # Create checkpoints directory
-    os.makedirs('checkpoints', exist_ok=True)
+    os.makedirs('sp2/checkpoints', exist_ok=True)
     
     # Data augmentation
     print("Setting up data generators...")
@@ -198,7 +211,7 @@ def train_cnn(
     print("\nModel Architecture:")
     model.model.summary()
     
-    checkpoint_path = os.path.join('checkpoints', f'{model_name}_best.h5')
+    checkpoint_path = os.path.join('sp2/checkpoints', f'{model_name}_best.h5')
     
     # Callbacks
     callbacks = [
@@ -283,7 +296,7 @@ def train_cnn(
         }
     }
     
-    history_file = os.path.join('checkpoints', f'{model_name}_history.json')
+    history_file = os.path.join('sp2/checkpoints', f'{model_name}_history.json')
     with open(history_file, 'w') as f:
         json.dump(history_dict, f, indent=2)
     
@@ -318,7 +331,7 @@ def plot_training_history(history, model_name='cnn_mer'):
     axes[1].grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plot_path = os.path.join('checkpoints', f'{model_name}_training_curves.png')
+    plot_path = os.path.join('sp2/checkpoints', f'{model_name}_training_curves.png')
     plt.savefig(plot_path, dpi=150, bbox_inches='tight')
     print(f"  Training curves saved: {plot_path}")
     plt.close()
@@ -328,7 +341,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dropout', type=float, default=0.5)
+    parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=50)

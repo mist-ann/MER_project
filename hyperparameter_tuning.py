@@ -14,6 +14,15 @@ from lstm_v2 import LSTMFixed as ImprovedLSTMModel
 from baseline_models import MelSpectrogramDataset
 
 
+def _filter_non_finite_samples(mel_specs, valences, arousals):
+    valences = np.asarray(valences, dtype=np.float32)
+    arousals = np.asarray(arousals, dtype=np.float32)
+    mask = np.isfinite(valences) & np.isfinite(arousals)
+
+    filtered_mel_specs = [mel_spec for mel_spec, keep in zip(mel_specs, mask) if keep]
+    return filtered_mel_specs, valences[mask], arousals[mask], int((~mask).sum())
+
+
 def grid_search_lstm(
     data_dir='data/processed',
     hidden_sizes=[128],
@@ -40,22 +49,33 @@ def grid_search_lstm(
     
     # Load data (raz)
     print("Loading datasets...")
-    train_data = np.load(f'sp2/{data_dir}/train_dataset_v0.npz')
-    with open(f'sp2/{data_dir}/train_mel_specs_v0.pkl', 'rb') as f:
+    train_data = np.load(f'{data_dir}/train_dataset.npz')
+    with open(f'{data_dir}/train_mel_specs.pkl', 'rb') as f:
         train_mel_specs = pickle.load(f)
     
-    test_data = np.load(f'sp2/{data_dir}/test_dataset_v0.npz')
-    with open(f'sp2/{data_dir}/test_mel_specs_v0.pkl', 'rb') as f:
+    test_data = np.load(f'{data_dir}/test_dataset.npz')
+    with open(f'{data_dir}/test_mel_specs.pkl', 'rb') as f:
         test_mel_specs = pickle.load(f)
+
+    train_mel_specs, train_valence, train_arousal, train_removed = _filter_non_finite_samples(
+        train_mel_specs,
+        train_data['valence'],
+        train_data['arousal'],
+    )
+    test_mel_specs, test_valence, test_arousal, test_removed = _filter_non_finite_samples(
+        test_mel_specs,
+        test_data['valence'],
+        test_data['arousal'],
+    )
     
-    print(f"✓ Train: {len(train_mel_specs)} samples")
-    print(f"✓ Test:  {len(test_mel_specs)} samples\n")
+    print(f"✓ Train: {len(train_mel_specs)} samples (removed {train_removed} invalid rows)")
+    print(f"✓ Test:  {len(test_mel_specs)} samples (removed {test_removed} invalid rows)\n")
     
     # Create test dataset (constant)
     test_dataset = MelSpectrogramDataset(
         test_mel_specs,
-        test_data['valence'],
-        test_data['arousal']
+        test_valence,
+        test_arousal
     )
     
     # Grid
@@ -101,8 +121,8 @@ def grid_search_lstm(
         # Prepare data
         train_dataset = MelSpectrogramDataset(
             train_mel_specs,
-            train_data['valence'],
-            train_data['arousal']
+            train_valence,
+            train_arousal
         )
         
         train_size = int(0.85 * len(train_dataset))
@@ -132,7 +152,7 @@ def grid_search_lstm(
             model,
             device=device,
             lr=lr,
-            checkpoint_dir='checkpoints',
+            checkpoint_dir='checkpoints3',
             experiment_name=experiment_name
         )
         trainer.run_config = {
@@ -163,7 +183,7 @@ def grid_search_lstm(
             elapsed = (datetime.now() - start_time).total_seconds() / 60
             
             # Checkpoint path (trainer saves best model there)
-            checkpoint_path = os.path.join('checkpoints', f'{experiment_name}_best.pth')
+            checkpoint_path = os.path.join('checkpoints3', f'{experiment_name}_best.pth')
 
             # Save result
             result = {
@@ -267,8 +287,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--hidden_sizes', type=int, nargs='+', default=[128])
     parser.add_argument('--num_layers', type=int, nargs='+', default=[3])
-    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.3, 0.5])
-    parser.add_argument('--lrs', type=float, nargs='+', default=[5e-4, 1e-3])
+    parser.add_argument('--dropouts', type=float, nargs='+', default=[0.5])
+    parser.add_argument('--lrs', type=float, nargs='+', default=[1e-3])
     parser.add_argument('--batch_sizes', type=int, nargs='+', default=[32])
     parser.add_argument('--epochs', type=int, default=40)
     parser.add_argument('--patience', type=int, default=5)
