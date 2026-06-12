@@ -1,0 +1,13 @@
+Night Training Session - 2026-04-23 12:14:14.134607
+======================================================================
+
+[12:14:14] Night Training Session Starting...
+[12:14:14] Python version: 3.12.3 (main, Jan 22 2026, 20:57:42) [GCC 13.3.0]
+[12:14:14] Working directory: /home/mist/Desktop/ml/sp2
+
+[12:14:14] 
+======================================================================
+[12:14:14] Starting: LSTM Full Training (improved architecture)
+[12:14:14] ======================================================================
+[12:14:14] Command: python lstm_full_training.py --hidden_size 256 --num_layers 3 --dropout 0.4 --lr 1e-3 --batch_size 32 --epochs 200
+

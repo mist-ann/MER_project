@@ -1,0 +1,254 @@
+Night Training Session - 2026-04-23 03:14:47.854782
+======================================================================
+
+[03:14:47] Night Training Session Starting...
+[03:14:47] Python version: 3.12.3 (main, Jan 22 2026, 20:57:42) [GCC 13.3.0]
+[03:14:47] Working directory: /home/mist/Desktop/ml/sp2
+
+[03:14:47] 
+======================================================================
+[03:14:47] Starting: Advanced Random Forest + Gradient Boosting
+[03:14:47] ======================================================================
+[03:14:47] Command: python advanced_rf.py
+
+[11:25:40]   ======================================================================
+[11:25:40]   ADVANCED RANDOM FOREST + GRADIENT BOOSTING
+[11:25:40]   ======================================================================
+[11:25:40]   Loading data...
+[11:25:40]   ✓ Train: 91140 samples
+[11:25:40]   ✓ Test: 22756 samples
+[11:25:40]   ======================================================================
+[11:25:40]   ADVANCED RANDOM FOREST
+[11:25:40]   ======================================================================
+[11:25:40]   Extracting features from 91140 samples...
+[11:25:40]     10000/91140
+[11:25:40]     20000/91140
+[11:25:40]     30000/91140
+[11:25:40]     40000/91140
+[11:25:40]     50000/91140
+[11:25:40]     60000/91140
+[11:25:40]     70000/91140
+[11:25:40]     80000/91140
+[11:25:40]     90000/91140
+[11:25:40]   ✓ Extracted 528 features
+[11:25:40]   Training Valence model...
+[11:25:40]   Training Arousal model...
+[11:25:40]   Cross-validation (5-fold):
+[11:25:40]     Valence R² (CV): 0.2397 (+/- 0.0197)
+[11:25:40]     Arousal R² (CV): 0.4407 (+/- 0.0221)
+[11:25:40]   Training scores:
+[11:25:40]     Valence R²: 0.8458
+[11:25:40]     Arousal R²: 0.8931
+[11:25:40]   Extracting features from 22756 samples...
+[11:25:40]     10000/22756
+[11:25:40]     20000/22756
+[11:25:40]   ✓ Extracted 528 features
+[11:25:40]   ✓ RF Results:
+[11:25:40]     Valence: MAE=0.1460, R²=0.2233
+[11:25:40]     Arousal: MAE=0.1832, R²=0.4703
+[11:25:40]     Training time: 29447.6s
+[11:25:40]   [ERROR] /home/mist/Desktop/ml/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+[11:25:40]   [ERROR]   warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  3.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 18.5min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 44.5min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 52.4min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  3.1min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 17.5min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 42.1min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 49.8min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.7min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 33.1min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 39.2min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.8min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 33.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 39.6min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.5s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.6s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.5min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.6min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 33.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 39.4min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.5min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.8min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 33.8min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 39.9min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.6min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 33.2min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 39.3min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.3s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.5s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.6s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 32.2min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 38.1min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.3s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.5s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.2min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 32.0min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 38.1min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.3s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.5s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 32.2min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 38.2min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.4s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.1min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 31.9min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 37.8min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.5s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.6s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:  2.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed: 13.4min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed: 32.3min
+[11:25:40]   [ERROR] [Parallel(n_jobs=-1)]: Done 500 out of 500 | elapsed: 38.1min finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.1s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.6s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    1.6s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    1.9s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.7s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    1.8s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    2.1s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Using backend ThreadingBackend with 16 concurrent workers.
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done  18 tasks      | elapsed:    0.0s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 168 tasks      | elapsed:    0.2s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 418 tasks      | elapsed:    0.4s
+[11:25:40]   [ERROR] [Parallel(n_jobs=16)]: Done 500 out of 500 | elapsed:    0.5s finished
+[11:25:40]   [ERROR] Traceback (most recent call last):
+[11:25:40]   [ERROR]   File "/home/mist/Desktop/ml/sp2/advanced_rf.py", line 493, in <module>
+[11:25:40]   [ERROR]     main()
+[11:25:40]   [ERROR]   File "/home/mist/Desktop/ml/sp2/advanced_rf.py", line 432, in main
+[11:25:40]   [ERROR]     rf.save('checkpoints/rf_advanced_best.pkl')
+[11:25:40]   [ERROR]   File "/home/mist/Desktop/ml/sp2/advanced_rf.py", line 263, in save
+[11:25:40]   [ERROR]     with open(filepath, 'wb') as f:
+[11:25:40]   [ERROR]          ^^^^^^^^^^^^^^^^^^^^
+[11:25:40]   [ERROR] FileNotFoundError: [Errno 2] No such file or directory: 'checkpoints/rf_advanced_best.pkl'
+[11:25:40] ✗ Advanced Random Forest + Gradient Boosting failed (return code 1)
+[11:25:40] 
+======================================================================
+[11:25:40] Starting: LSTM Full Training (improved architecture)
+[11:25:40] ======================================================================
+[11:25:40] Command: python lstm_full_training.py --hidden_size 256 --num_layers 3 --dropout 0.4 --lr 1e-3 --batch_size 32 --epochs 200
+
+[11:25:45]   Using device: cpu
+[11:25:45]   Loading datasets...
+[11:25:45]   ✓ Train: 91140 samples
+[11:25:45]   ✓ Test:  22756 samples
+[11:25:45]   [ERROR] /home/mist/Desktop/ml/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+[11:25:45]   [ERROR]   warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[11:25:45]   [ERROR] Traceback (most recent call last):
+[11:25:45]   [ERROR]   File "/home/mist/Desktop/ml/sp2/lstm_full_training.py", line 511, in <module>
+[11:25:45]   [ERROR]     main(
+[11:25:45]   [ERROR]   File "/home/mist/Desktop/ml/sp2/lstm_full_training.py", line 446, in main
+[11:25:45]   [ERROR]     trainer = LSTMTrainer(
+[11:25:45]   [ERROR]               ^^^^^^^^^^^^
+[11:25:45]   [ERROR]   File "/home/mist/Desktop/ml/sp2/lstm_full_training.py", line 136, in __init__
+[11:25:45]   [ERROR]     self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+[11:25:45]   [ERROR]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[11:25:45]   [ERROR] TypeError: ReduceLROnPlateau.__init__() got an unexpected keyword argument 'verbose'
+[11:25:45] ✗ LSTM Full Training (improved architecture) failed (return code 1)
+[11:25:45] 
+======================================================================
+[11:25:45] Starting: Hyperparameter Tuning (Grid Search)
+[11:25:45] ======================================================================
+[11:25:45] Command: python hyperparameter_tuning.py --hidden_sizes 128 256 --num_layers 2 --dropouts 0.3 0.5 --lrs 5e-4 1e-3 --batch_sizes 32 --epochs 40 --patience 5
+
+[11:25:50]   Using device: cpu
+[11:25:50]   Loading datasets...
+[11:25:50]   ✓ Train: 91140 samples
+[11:25:50]   ✓ Test:  22756 samples
+[11:25:50]   Total combinations to test: 8
+[11:25:50]   Estimated time: ~5.3 GPU-hours
+[11:25:50]   ======================================================================
+[11:25:50]   Combination 1/8
+[11:25:50]   ======================================================================
+[11:25:50]   Params: hidden=128, layers=2, dropout=0.3, lr=0.0005, batch=32
+[11:25:50]   [ERROR] /home/mist/Desktop/ml/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+[11:25:50]   [ERROR]   warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[11:25:50]   [ERROR] Traceback (most recent call last):
+[11:25:50]   [ERROR]   File "/home/mist/Desktop/ml/sp2/hyperparameter_tuning.py", line 272, in <module>
+[11:25:50]   [ERROR]     grid_search_lstm(
+[11:25:50]   [ERROR]   File "/home/mist/Desktop/ml/sp2/hyperparameter_tuning.py", line 135, in grid_search_lstm
+[11:25:50]   [ERROR]     trainer = LSTMTrainer(
+[11:25:50]   [ERROR]               ^^^^^^^^^^^^
+[11:25:50]   [ERROR]   File "/home/mist/Desktop/ml/sp2/lstm_full_training.py", line 136, in __init__
+[11:25:50]   [ERROR]     self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+[11:25:50]   [ERROR]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[11:25:50]   [ERROR] TypeError: ReduceLROnPlateau.__init__() got an unexpected keyword argument 'verbose'
+[11:25:50] ✗ Hyperparameter Tuning (Grid Search) failed (return code 1)
+[11:25:50] 
+======================================================================
+[11:25:50] NIGHT TRAINING SUMMARY
+[11:25:50] ======================================================================
+[11:25:50] Total time: 491.0 minutes
+
+[11:25:50]   Advanced Random Forest + Gradient Boosting: failed (490.9 min)
+[11:25:50]   LSTM Full Training (improved architecture): failed (0.1 min)
+[11:25:50]   Hyperparameter Tuning (Grid Search): failed (0.1 min)
+[11:25:50] 
+✓ Results saved to: night_training_results.json
